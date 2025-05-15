@@ -1,0 +1,22 @@
+---
+- name: users
+  hosts: webservers
+  tasks:
+    - name: Configure webadmin user group
+      ansible.builtin.group:
+        name: webadmin
+        state: present
+    - name: Add ops1 to webadmin user group
+      ansible.builtin.user:
+        append: true
+        groups: ['webadmin']
+        name: ops1
+        state: present
+    - name: Add ops2 to webadmin user group
+      ansible.builtin.user:
+        append: true
+        groups: ['webadmin']
+        name: ops2
+        state: present
+
+...

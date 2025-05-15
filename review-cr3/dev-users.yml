@@ -1,0 +1,29 @@
+---
+- name: Create dev users
+  hosts: webservers
+  # Pass "--pae false --vault-id @prompt" to ansible-navigator run command in order to decrypt.
+  vars_files:
+    - pass-vault.yml
+  tasks:
+  - name: Create webdev group
+    ansible.builtin.group:
+      name: webdev
+      state: present
+
+  - name: Create developer user
+    ansible.builtin.user:
+      name: developer
+      password: "{{pwhash}}"
+      append: true
+      groups: webdev
+  - name: Make sure group webdev is in the sudoers configuration
+    ansible.builtin.lineinfile:
+      path: /etc/sudoers.d/webdev
+      state: present
+      create: true
+      mode: 0440
+      line: '%webdev ALL=(ALL) NOPASSWD: ALL'
+      validate: /usr/sbin/visudo -cf %s
+# %webdev ALL=(ALL) NOPASSWD: ALL
+ 
+...

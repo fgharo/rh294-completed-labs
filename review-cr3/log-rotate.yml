@@ -1,0 +1,14 @@
+---
+- name: Log Rotate
+  hosts: webservers
+  tasks:
+  - name: Creates a cron file under /etc/cron.d
+    ansible.builtin.cron:
+      name: rotate_web
+      hour: "0"
+      minute: "0"
+      user: devops
+      job: "logrotate -f /etc/logrotate.d/httpd"
+      cron_file: /etc/cron.d/rotate_web
+
+...

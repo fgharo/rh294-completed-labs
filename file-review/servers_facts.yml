@@ -1,0 +1,9 @@
+---
+- name: Identify serverb facts
+  hosts: servers
+  tasks:
+    - name: Print Facts
+      ansible.builtin.debug:
+        # var: ansible_facts
+        msg: "total sys memory: {{ ansible_facts['memtotal_mb'] }}, num cpus: {{ ansible_facts['processor_count']  }}"
+...

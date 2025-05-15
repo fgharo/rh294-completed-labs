@@ -1,0 +1,18 @@
+---
+- name: Install packages
+  hosts: dev
+  vars_files:
+    - package_vars.yml 
+  vars:
+    one_mb_in_bytes: 1048
+  tasks:
+
+    - name: Install the required packages
+      ansible.builtin.dnf:
+        name: "{{ packages }}"
+        state: latest
+    - name: Install redis package
+      ansible.builtin.dnf:
+        name: redis.x86_64
+        state: latest
+      when: 10 < ansible_facts['swaptotal_mb']

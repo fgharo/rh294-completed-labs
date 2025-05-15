@@ -1,0 +1,7 @@
+---
+- name: Configure Network
+  hosts: webservers
+    # ignore_errors: true
+  roles:
+  - name: redhat.rhel_system_roles.network
+...

@@ -1,0 +1,6 @@
+---
+- name: network_playbook play 1
+  hosts: webservers
+  roles:
+    - name: redhat.rhel_system_roles.network
+...

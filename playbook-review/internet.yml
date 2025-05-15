@@ -1,0 +1,46 @@
+---
+- name: Enable internet servies
+  hosts: serverb.lab.example.com
+  become: true
+  tasks:
+    - name: Install Packages
+      ansible.builtin.dnf:
+        name: "firewalld,httpd,mariadb-server,php,php-mysqlnd"
+        state: latest
+    - name: Ensure firewall up
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: yes
+        state: enabled
+      loop:
+        - http
+        - https
+
+    - name: Ensure httpd and mariadb services are up
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop:
+        - httpd
+        - mariadb
+  
+    - name: Copy index.php file 
+      ansible.builtin.copy:
+        src: index.php
+        dest: /var/www/html/
+        mode: '0644'
+
+- name: Control Node Validation
+  hosts: workstation.lab.example.com
+  tasks:
+  - name: Validate http server up and ready
+    ansible.builtin.uri:
+      url: http://serverb.lab.example.com
+      return_content: yes
+      status_code: 200
+    register: this
+
+      # failed_when: " not in this.content"
+
+...

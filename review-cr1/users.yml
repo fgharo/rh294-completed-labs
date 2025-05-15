@@ -1,0 +1,14 @@
+---
+- name: Users
+  hosts: dev
+  become: true # Review this
+  force_handlers: true # Review this
+  tasks:
+  - name: Add users sam and joe
+    ansible.builtin.user:
+      name: "{{item}}"
+      state: present
+    loop:
+      - joe
+      - sam
+...

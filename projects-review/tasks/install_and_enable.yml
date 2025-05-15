@@ -1,0 +1,12 @@
+---
+- name: Install Packages {{package}}
+  ansible.builtin.dnf:
+    name: "{{package}}"
+    state: latest
+
+- name: Enable Services {{service}}
+  ansible.builtin.service:
+    name: "{{service}}"
+    enabled: true
+    state: started
+...

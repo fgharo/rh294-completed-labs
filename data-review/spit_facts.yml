@@ -1,0 +1,8 @@
+---
+- name: Spit Facts
+  hosts: webserver
+  tasks:
+  - name: Ansible Facts
+    ansible.builtin.debug:
+      var: ansible_facts
+...

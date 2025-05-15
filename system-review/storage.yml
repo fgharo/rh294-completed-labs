@@ -1,0 +1,24 @@
+---
+- name: storage
+  hosts: webservers
+  roles:
+    - name: redhat.rhel_system_roles.storage
+      # This is valid however for roles it is generally a better practice to put this under groups_var/<host name or host group>/<arbitrary_name>.yml
+      # For example: group_vars/webservers/storage_vars.yml
+      #  storage_pools:
+      #  - name: apache-vg
+      #    disks:
+      #      - vdb
+      #    type: lvm
+      #    volumes:
+      #    - name: content-lv
+      #      size: "64 MiB"
+      #      fs_type: xfs
+      #      mount_point: /var/www
+      #      state: present
+      #    - name: logs-lv
+      #      size: "128 MiB"
+      #      fs_type: xfs 
+      #      mount_point: /var/log/httpd
+      #      state: present
+...

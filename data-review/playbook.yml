@@ -1,0 +1,89 @@
+---
+- name: Configure Apache HTTP Server with Basic Auth
+  hosts: webserver
+  vars:
+    firewall_pkg:  firewalld
+    firewall_svc:  firewalld
+    web_pkg: httpd
+    web_svc: httpd
+    ssl_pkg: mod_ssl
+    httpdconf_src: files/httpd.conf
+    httpdconf_dest:  /etc/httpd/conf/httpd.conf
+    htaccess_src:  files/.htaccess
+    secrets_dir: /etc/httpd/secrets
+    secrets_src: files/htpasswd
+    secrets_dest:  "{{ secrets_dir }}/htpasswd"
+    web_root:  /var/www/html
+  tasks:
+    - name: Latest Packages Installed
+      ansible.builtin.dnf:
+        name: "{{firewall_pkg}},{{web_pkg}},{{ssl_pkg}}"
+        state: latest
+
+    - name: File Copied
+      ansible.builtin.copy:
+        src: "{{ httpdconf_src }}"
+        dest: "{{ httpdconf_dest }}"
+        mode: '0644'
+        owner: root
+        group: root
+
+    - name: Create Secrets Dir
+      ansible.builtin.file:
+        path: "{{ secrets_dir }}"
+        state: directory
+        mode: '0500'
+        owner: apache
+        group: apache
+
+    - name: Create .htaccess file
+      ansible.builtin.copy:
+        src: "{{ htaccess_src }}"
+        dest: "{{ web_root }}/.htaccess"
+        mode: '0400'
+        owner: apache
+        group: apache
+
+    - name: Create web content file
+      ansible.builtin.copy:
+        content: "{{ ansible_facts['fqdn'] }} ({{ ansible_facts['default_ipv4']['address'] }}) has been customized by Ansible."
+        dest: "{{ web_root }}/index.html"
+    - name: Enable Firewall Service
+      ansible.builtin.service:
+        name: "{{firewall_svc }}"
+        state: started
+        enabled: true
+
+    - name: Enable https service through firewall
+      ansible.posix.firewalld:
+        service: https
+        permanent: true
+        state: enabled
+
+    - name: Enable web Service
+      ansible.builtin.service:
+        name: "{{ web_svc }}"
+        state: started
+        enabled: true
+- name: Test Web Server Authentication
+  hosts: workstation*
+  become: false
+  vars:
+    web_user: guest
+  vars_files: vars/secret.yml
+  tasks:
+    - name: Test Uri
+      ansible.builtin.uri:
+        url: https://serverb.lab.example.com
+        user: "{{ web_user }}"
+        password: "{{ web_pass }}"
+        force_basic_auth: true
+        validate_certs: false
+        status_code: 200
+        return_content: true
+      register: auth_test
+    - name: Print Test Result
+      ansible.builtin.debug:
+        var: auth_test
+
+...

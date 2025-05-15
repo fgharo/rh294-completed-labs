@@ -1,0 +1,43 @@
+---
+- name: motd
+  hosts: servers
+  # vars:
+  become: true
+  remote_user: devops
+    # become_user: devops
+  # become_method: sudo
+    # become_ask_pass: false
+  tasks:
+  - name: deploy motd
+    ansible.builtin.template:
+      src: motd.j2
+      dest: /etc/motd
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Verify motd file exists
+    ansible.builtin.stat:
+      path: /etd/motd
+    register: motd_file_state
+
+  - name: Display motd state
+    ansible.builtin.debug:
+      var: motd_file_state
+
+  - name: Copy issue file
+    ansible.builtin.copy:
+      src: files/issue
+      dest: /etc/issue
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Ensure issue.net sym link
+    ansible.builtin.file:
+      src: /etc/issue
+      dest: /etc/issue.net
+      state: link
+      owner: root
+      group: root
+      force: true
+...
