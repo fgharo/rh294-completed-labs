@@ -1,0 +1,10 @@
+---
+- name: Get all managed hosts
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Deploy /etc/hosts
+      ansible.builtin.template:
+        src: mockhostsfile.j2
+        dest: /tmp/myhosts
+...

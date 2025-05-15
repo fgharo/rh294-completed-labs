@@ -1,0 +1,6 @@
+# localhost ansible_connection=http://127.0.0.1
+workstation.lab.example.com
+servera.lab.example.com
+serverb.lab.example.com
+serverc.lab.example.com
+serverd.lab.example.com

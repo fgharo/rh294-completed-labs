@@ -1,0 +1,23 @@
+---
+- name: Get all managed hosts
+  hosts: workstation.lab.example.com
+  gather_facts: false
+  tasks:
+    - name: Create list of all managed hosts
+      set_fact:
+        all_hosts_list: "{{groups['all'] | sort }}"
+
+    - name: Save list to a file to share with other plays
+      copy:
+        dest: "/tmp/host_list.json"
+        content: "{{ all_hosts_list | to_json }}"
+
+- name: Distribute the list to all hosts
+  hosts: all 
+  tasks:
+    - name: Load host lists onto managed hosts
+      copy:
+        remote_src: no
+        src: "/tmp/host_list.json"
+        dest: "/tmp/host_list.json"
+...

@@ -1,0 +1,15 @@
+---
+- name: Show Inventory Hosts
+  hosts: all
+  tasks:
+    - name: Show Inventory Managed Host By ShortName
+      ansible.builtin.debug:
+        msg: "Managed Host: {{inventory_hostname}}  ShortName: {{ansible_facts['hostname']}}"
+
+    - name: Show Inventory Managed Host By LongName
+      ansible.builtin.debug:
+        msg: "Managed Host: {{inventory_hostname}}  ShortName: {{ansible_facts['fqdn']}}"
+
+
+
+...
