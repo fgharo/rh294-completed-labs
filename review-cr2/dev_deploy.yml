@@ -1,0 +1,44 @@
+---
+- name: dev_deploy
+  hosts: server[ab].lab.example.com
+  force_handlers: true
+  become: true
+    # ignore_errors: yes
+  tasks:
+  - name: Install the latest version of Apache
+    ansible.builtin.dnf:
+      name: httpd
+      state: latest
+
+  - name: Start service httpd, if not started
+    ansible.builtin.service:
+      name: httpd
+      state: started
+      enabled: yes
+
+  - name: Template a file to /etc/httpd/conf.d/vhost.conf
+    ansible.builtin.template:
+      src: templates/vhost.conf.j2
+      dest: /etc/httpd/conf.d/vhost.conf
+    notify:
+      - Restart httpd
+
+  - name: Copy index file
+    ansible.builtin.copy:
+      src: files/index.html
+      dest: /var/www/vhosts/{{ (inventory_hostname | split('.'))[0] }}/
+
+  - name: permit traffic in default zone for https service
+    ansible.posix.firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+      immediate: yes
+
+  handlers:
+  - name: Restart httpd
+    ansible.builtin.service:
+      name: httpd
+      state: restarted
+
+...

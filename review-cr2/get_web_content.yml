@@ -1,0 +1,20 @@
+---
+- name: Test web content
+  hosts: workstation
+  become: true
+  tasks:
+    - # name: Retrieve web content
+      block:
+        - name: Retrieve web content
+          ansible.builtin.uri:
+            url: http://servera.lab.example.com
+            return_content: true
+          register: content
+
+      rescue:
+        - name: Write to error file
+          copy:
+            content: "{{content}}"
+            dest: /home/student/review-cr2/error.log  
+
+...

@@ -1,0 +1,1 @@
+{"content": "", "redirected": false, "url": "http://servera.lab.example.com", "status": -1, "elapsed": 0, "changed": false, "failed": true, "msg": "Status code was -1 and not [200]: Request failed: <urlopen error [Errno 111] Connection refused>"}
