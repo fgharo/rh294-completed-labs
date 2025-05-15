@@ -1,0 +1,6 @@
+---
+- name: Site
+  hosts: webdev
+  roles:
+  - name: ansible-httpd
+...
